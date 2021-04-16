@@ -7,11 +7,7 @@ import json
 import logging
 import requests
 
-from secrets import ECWID_PRIVATE_TOKEN, ECWID_PUBLIC_TOKEN
-
-
-
-
+from secrets import ECWID_PRIVATE_TOKEN, ECWID_PUBLIC_TOKEN, STORE_ID
 
 ECWID_HOST = "https://app.ecwid.com/"
 TEST_MODE = False
@@ -19,7 +15,7 @@ CACHED_CONTENT = json.load(open("response.json"))
 
 
 class Orders(object):
-    DEFAULT_LIMIT = 26
+    DEFAULT_LIMIT = 100
     DEFAULT_OFFSET = 0
     
     DEFAULT_STATUS_200 = 200
