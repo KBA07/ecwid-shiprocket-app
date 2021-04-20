@@ -3,29 +3,9 @@ import csv
 from time import time
 from shutil import copyfile
 
-from fetch import orders_obj
+from fetch import Orders
+from settings import Settings
 from logger import LOG
-
-# fetch orders, transform it to csv and mail it to the recipient.
-
-SHOW_DISCOUNT = bool(os.getenv("SHOW_DISCOUNT", False))
-SEND_NOTIFICATION = bool(os.getenv("SEND_NOTIFICATION", True))
-CHANNEL = os.getenv("CHANNEL", "CUSTOM")
-PICKUP_ADDRESS_NAME = os.getenv("PICKUP_ADDRESS_NAME", "Mahaveer")
-PICKUP_LOCATION_ID = int(os.getenv("PICKUP_LOCATION_ID", 1124203))
-
-ID_PREFIX =  os.getenv("ID_PREFIX", "STY")
-ID_FIRST_VALUE = int(os.getenv("ID_FIRST_VALUE", 238594550))
-INFLUENCER_ID_PREFIX = os.getenv("INFLUENCER_ID_PREFIX", "ISTY")
-INFLUENCER_COUPON_PREFIX = os.getenv("INFLUENCER_COUPON_PREFIX", "INFC")
-
-DEFAULT_LENGTH = 14
-DEFAULT_BREADTH = 12
-DEFAULT_HEIGHT = 0.5
-DEFAULT_WEIGHT = 0.5
-
-SOURCE_FILE = 'order.csv'
-DESTINATION_FILE = 'orders{}.csv'
 
 
 def get_payment_method(payment_status):
@@ -43,7 +23,8 @@ def get_order_date(date_string):
 
 
 class IdGenerator(object):
-    def __init__(self, ID_PREFIX=ID_PREFIX, INFLUENCER_ID_PREFIX=INFLUENCER_ID_PREFIX, ID_FIRST_VALUE=ID_FIRST_VALUE):
+    def __init__(self, ID_PREFIX=Settings.ID_PREFIX, INFLUENCER_ID_PREFIX=Settings.INFLUENCER_ID_PREFIX, 
+        ID_FIRST_VALUE=Settings.ID_FIRST_VALUE):
         
         self.id_prefix = ID_PREFIX
         self.id_first_value = ID_FIRST_VALUE
@@ -55,7 +36,7 @@ class IdGenerator(object):
     def generate_id(self, ecwid_order_id):
         order_id = self.id_first_value + int(ecwid_order_id)
 
-        if INFLUENCER_COUPON_PREFIX in order.get("discountCoupon", {}).get("code", "XXXX"): # Gracefully handling the discount coupon
+        if Settings.INFLUENCER_COUPON_PREFIX in order.get("discountCoupon", {}).get("code", "XXXX"): # Gracefully handling the discount coupon
             return f"{self.influencer_id_prefix}{order_id}"
 
         return f"{self.id_prefix}{order_id}"
@@ -64,14 +45,15 @@ class IdGenerator(object):
 if __name__ == "__main__":
     id_obj = IdGenerator()
     
-    dest_file = DESTINATION_FILE.format(int(time()))
-    copyfile(SOURCE_FILE, dest_file)
+    dest_file = Settings.DESTINATION_FILE.format(int(time()))
+    copyfile(Settings.SOURCE_FILE, dest_file)
 
-    
+    orders_obj = Orders(Settings.ECWID_HOST, Settings.ECWID_STORE_ID, Settings.ECWID_PRIVATE_TOKEN)
+
     for order in orders_obj.get_all_orders(created_from=1618840946):
         order_id = id_obj.generate_id(order['id'])
         order_date = get_order_date(order['createDate'])
-        channel = CHANNEL
+        channel = Settings.CHANNEL
         payment_method = get_payment_method(order['paymentStatus'])
         cutomer_first_name = order['shippingPerson'].get('firstName') or order['shippingPerson'].get('name')
         cutomer_last_name = order['shippingPerson'].get('lastName')
@@ -104,19 +86,19 @@ if __name__ == "__main__":
             product_quantity = item['quantity']
             tax = item['tax'] if item['tax'] else None
             selling_price = item['price']
-            discount = item.get('couponAmount') if SHOW_DISCOUNT else None
+            discount = item.get('couponAmount') if Settings.SHOW_DISCOUNT else None
             shipping_charges = item.get('shipping') if item.get('shipping') else None
             cod_charges = None
             gift_wrap_charges = None
-            total_discount_per_order = order['couponDiscount'] if SHOW_DISCOUNT else None
-            length = item['dimensions']['length'] if item['dimensions']['length'] else DEFAULT_LENGTH
-            breadth = item['dimensions']['width'] if item['dimensions']['width'] else DEFAULT_BREADTH
-            height = item['dimensions']['height'] if item['dimensions']['height'] else DEFAULT_HEIGHT
-            weight = item['weight'] if item['weight'] else DEFAULT_WEIGHT
-            send_notification = SEND_NOTIFICATION
+            total_discount_per_order = order['couponDiscount'] if Settings.SHOW_DISCOUNT else None
+            length = item['dimensions']['length'] if item['dimensions']['length'] else Settings.DEFAULT_LENGTH
+            breadth = item['dimensions']['width'] if item['dimensions']['width'] else Settings.DEFAULT_BREADTH
+            height = item['dimensions']['height'] if item['dimensions']['height'] else Settings.DEFAULT_HEIGHT
+            weight = item['weight'] if item['weight'] else Settings.DEFAULT_WEIGHT
+            send_notification = Settings.SEND_NOTIFICATION
             comment = None
             hsn_code = None
-            pickup_location_id = PICKUP_LOCATION_ID
+            pickup_location_id = Settings.PICKUP_LOCATION_ID
 
             order_details = [master_sku, product_name, product_quantity, tax, selling_price, discount, shipping_charges, cod_charges,
                 gift_wrap_charges, total_discount_per_order, length, breadth, height, weight, send_notification, comment, hsn_code, 

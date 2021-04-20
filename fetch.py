@@ -7,11 +7,9 @@ import json
 import requests
 
 from logger import LOG
-from secrets import ECWID_PRIVATE_TOKEN, ECWID_PUBLIC_TOKEN, STORE_ID
+from settings import Settings
 
-ECWID_HOST = "https://app.ecwid.com/"
-TEST_MODE = True
-CACHED_CONTENT = json.load(open("response.json")) if TEST_MODE else {}
+CACHED_CONTENT = json.load(open("response.json")) if Settings.TEST_MODE else {}
 
 
 class Orders(object):
@@ -48,7 +46,7 @@ class Orders(object):
         self._add_auth(params)
 
         content = {}
-        if TEST_MODE:
+        if Settings.TEST_MODE:
             content = CACHED_CONTENT
         else:
             resp = requests.get(URL, params=params)
@@ -78,18 +76,8 @@ class Orders(object):
                 yield None
 
             item_len = len(content.get("items"))
-            print(f"Yielding total {item_len} number of items")
+            LOG.debug(f"Yielding total {item_len} number of items")
             for items in content["items"]:
                 yield items
 
             offset += limit
-
-
-orders_obj = Orders(ECWID_HOST, STORE_ID, ECWID_PRIVATE_TOKEN)
-        
-
-# if __name__ == "__main__":
-    
-#     content = ord.get_orders()
-
-#     print(f"Response for all the orders is {content}")
