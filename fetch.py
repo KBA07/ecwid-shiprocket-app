@@ -11,7 +11,7 @@ from secrets import ECWID_PRIVATE_TOKEN, ECWID_PUBLIC_TOKEN, STORE_ID
 
 ECWID_HOST = "https://app.ecwid.com/"
 TEST_MODE = True
-CACHED_CONTENT = json.load(open("response.json"))
+CACHED_CONTENT = json.load(open("response.json")) if TEST_MODE else {}
 
 
 class Orders(object):
@@ -27,7 +27,7 @@ class Orders(object):
     ORDERS_URI = "api/v3/{store_id}/orders"
 
     def __init__(self, host, store_id, access_token):
-        LOG.debug("Got host as {host}, store id {store_id} and access token as {access_token}")
+        LOG.debug(f"Got host as {host}, store id {store_id} and access token as {access_token}")
         self.host = host
         self.store_id = store_id
         self.access_token = access_token

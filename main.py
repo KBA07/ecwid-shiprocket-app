@@ -19,9 +19,9 @@ ID_FIRST_VALUE = int(os.getenv("ID_FIRST_VALUE", 238594550))
 INFLUENCER_ID_PREFIX = os.getenv("INFLUENCER_ID_PREFIX", "ISTY")
 INFLUENCER_COUPON_PREFIX = os.getenv("INFLUENCER_COUPON_PREFIX", "INFC")
 
-DEFAULT_LENGTH = 10
-DEFAULT_BREADTH = 10
-DEFAULT_HEIGHT = 10
+DEFAULT_LENGTH = 14
+DEFAULT_BREADTH = 12
+DEFAULT_HEIGHT = 0.5
 DEFAULT_WEIGHT = 0.5
 
 SOURCE_FILE = 'order.csv'
@@ -37,8 +37,9 @@ def get_payment_method(payment_status):
 def get_order_date(date_string):
     date, time, _ = date_string.split(" ")
     year, month, day = date.split("-")
+    year = year[2:] # Hack to satisfy the Shiprocket bulk update
     hour, minute, _ = time.split(":")
-    return f"{'-'.join([day, month, year])} {':'.join([hour, minute])}"
+    return f"{'-'.join([year, month, day])} {':'.join([hour, minute])}"
 
 
 class IdGenerator(object):
@@ -67,7 +68,7 @@ if __name__ == "__main__":
     copyfile(SOURCE_FILE, dest_file)
 
     
-    for order in orders_obj.get_all_orders():
+    for order in orders_obj.get_all_orders(created_from=1618840946):
         order_id = id_obj.generate_id(order['id'])
         order_date = get_order_date(order['createDate'])
         channel = CHANNEL
@@ -76,7 +77,8 @@ if __name__ == "__main__":
         cutomer_last_name = order['shippingPerson'].get('lastName')
         # customer_name = order['shippingPerson']['name']
         customer_email = order['email']
-        customer_mobile =  order['shippingPerson']['phone']
+        number_length = len(order['shippingPerson']['phone'])
+        customer_mobile =  order['shippingPerson']['phone'][number_length - 10:]
         customer_alternate_mobile = None
         address_line_1 = order['shippingPerson']['street']
         address_line_2 = None
