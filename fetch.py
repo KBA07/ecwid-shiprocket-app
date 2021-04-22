@@ -12,7 +12,7 @@ from settings import Settings
 CACHED_CONTENT = json.load(open("response.json")) if Settings.TEST_MODE else {}
 
 
-class Orders(object):
+class EcwidAPI(object):
     DEFAULT_LIMIT = 100
     DEFAULT_OFFSET = 0
     
@@ -24,7 +24,7 @@ class Orders(object):
 
     ORDERS_URI = "api/v3/{store_id}/orders"
 
-    def __init__(self, host, store_id, access_token):
+    def __init__(self, host=Settings.ECWID_HOST, store_id=Settings.ECWID_STORE_ID, access_token=Settings.ECWID_PRIVATE_TOKEN):
         LOG.debug(f"Got host as {host}, store id {store_id} and access token as {access_token}")
         self.host = host
         self.store_id = store_id
