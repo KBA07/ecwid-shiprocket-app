@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
     orders_obj = Orders(Settings.ECWID_HOST, Settings.ECWID_STORE_ID, Settings.ECWID_PRIVATE_TOKEN)
 
-    for order in orders_obj.get_all_orders(created_from=1618840946):
+    for order in orders_obj.get_all_orders(created_from=1618936553):
         order_id = id_obj.generate_id(order['id'])
         order_date = get_order_date(order['createDate'])
         channel = Settings.CHANNEL

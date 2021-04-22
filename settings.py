@@ -3,7 +3,7 @@ import os
 from logger import LOG
 
 class Settings(object):
-    TEST_MODE = True
+    TEST_MODE = False
     ECWID_HOST = os.getenv("ECWID_HOST", "https://app.ecwid.com/")
     ECWID_PUBLIC_TOKEN = os.getenv("ECWID_PUBLIC_TOKEN") # Optional for now
     ECWID_PRIVATE_TOKEN = os.getenv("ECWID_PRIVATE_TOKEN") # Mandatory
@@ -29,8 +29,10 @@ class Settings(object):
 
     DEFAULT_LENGTH = int(os.getenv("DEFAULT_LENGTH", 14))
     DEFAULT_BREADTH = int(os.getenv("DEFAULT_BREADTH", 12))
-    DEFAULT_HEIGHT = int(os.getenv("DEFAULT_HEIGHT", 0.5))
-    DEFAULT_WEIGHT = int(os.getenv("DEFAULT_WEIGHT", 0.5))
+    DEFAULT_HEIGHT = float(os.getenv("DEFAULT_HEIGHT", 0.5))
+    DEFAULT_WEIGHT = float(os.getenv("DEFAULT_WEIGHT", 0.5))
+
+    LOG.debug(f"DEFAULT_LENGTH: {DEFAULT_LENGTH}, DEFAULT_BREADTH: {DEFAULT_BREADTH}, DEFAULT_HEIGHT:{DEFAULT_HEIGHT}, DEFAULT_WEIGHT: {DEFAULT_WEIGHT} ")
 
     SOURCE_FILE = os.getenv("SOURCE_FILE", "order.csv")
     DESTINATION_FILE_PREFIX = os.getenv("DESTINATION_FILE_PREFIX", "orders")
