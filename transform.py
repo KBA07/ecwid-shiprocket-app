@@ -47,10 +47,17 @@ class Transformer(object):
     def generate_csv_order_file(self, created_from, created_to=int(time()), source_sample_file=Settings.SOURCE_FILE, 
         dest_file_format = Settings.DESTINATION_FILE):
 
-        dest_file = dest_file_format.format(created_to)
+        for file in os.listdir(Settings.GENERATED_FILES_FOLDER):
+            if "csv" in file:
+                os.remove(Settings.GENERATED_FILES_FOLDER + file)
+
+        dest_file = Settings.GENERATED_FILES_FOLDER + dest_file_format.format(created_to)
         copyfile(source_sample_file, dest_file)
 
+        order_count = 0
+        total_price = 0
         for order in self.ecwid_api_obj.get_all_orders(created_from, created_to):
+            order_count += 1
             order_id = self.generate_id(order['id'], order)
             order_date = self.get_order_date(order['createDate'])
             channel = Settings.CHANNEL
@@ -85,6 +92,7 @@ class Transformer(object):
                 product_quantity = item['quantity']
                 tax = item['tax'] if item['tax'] else None
                 selling_price = item['price']
+                total_price += selling_price
                 discount = item.get('couponAmount') if Settings.SHOW_DISCOUNT else None
                 shipping_charges = item.get('shipping') if item.get('shipping') else None
                 cod_charges = None
@@ -108,9 +116,13 @@ class Transformer(object):
                     writer = csv.writer(file)
                     writer.writerow(total_detail)
 
+        return dest_file, order_count, total_price, created_to    
+
 if __name__ == '__main__':
     Tr = Transformer()
     if len(sys.argv) == 3:
         Tr.generate_csv_order_file(sys.argv[1], sys.argv[2])
     elif len(sys.argv) == 2:
         Tr.generate_csv_order_file(sys.argv[1])
+    else:
+        Tr.generate_csv_order_file(1)
