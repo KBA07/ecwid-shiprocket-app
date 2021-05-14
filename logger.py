@@ -2,10 +2,10 @@ import logging
 import sys
 
 LOG = logging.getLogger()
-LOG.setLevel(logging.DEBUG)
+LOG.setLevel(logging.INFO)
 
 handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.DEBUG)
+handler.setLevel(logging.INFO)
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
