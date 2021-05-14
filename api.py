@@ -19,8 +19,7 @@ def generate_csv(created_from, created_to=None, download=False):
     file_name, count, total_price, created_to = tr.generate_csv_order_file(created_from)
 
     if not download:
-        subject = f"Recieved {count} orders from {time.strftime('%d %b %Y %H:%M', time.localtime(created_from))} to"
-        f" {time.strftime('%d %b %Y %H:%M', time.localtime(created_to))} worth {total_price}"
+        subject = f"Recieved {count} orders from {time.strftime('%d %b %Y %H:%M', time.localtime(created_from))} to {time.strftime('%d %b %Y %H:%M', time.localtime(created_to))} worth {total_price}"
         body = f"Hi Stylor,\n\nYou have {subject.lower()}, please check and verify the attachment.\n\nRegards,\nBot Kashif"
         
         LOG.info(f" Subject {subject}")
