@@ -6,7 +6,6 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from transform import Transformer
 from logger import LOG
 from settings import Settings
 
@@ -54,25 +53,4 @@ class Mail(object):
             server.login(self.sender_email, self.sender_password)
             LOG.info("sending mail")
             server.sendmail(self.sender_email, to, text)
-
-
-if __name__ == '__main__':
-    tr = Transformer()
-    created_from = 1
-    file_name, count, total_price, created_to = tr.generate_csv_order_file(created_from)
-
-    mailer = Mail()
-
-    subject = f"Recieved {count} orders from {time.strftime('%d %b %Y %H:%M', time.localtime(created_from))} to {time.strftime('%d %b %Y %H:%M', time.localtime(created_to))} worth {total_price}"
-
-    body = f"Hi Stylor,\n\nYou have {subject.lower()}, please check and verify the attachment.\n\nRegards,\nBot Kashif"  
-
-    LOG.info(f" Subject {subject}")
-    mailer.send_mail(subject, Settings.RECIEVER_EMAIL, body, file_name)
-
-    # sched.start()
-
-    # with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-    #     LOG.info(f"Sending Mail {sender_email}")
-        
-        
+    

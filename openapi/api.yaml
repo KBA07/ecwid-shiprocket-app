@@ -1,0 +1,57 @@
+swagger: "2.0"
+info:
+  description: "This is the API specs for stylor ecommerce"
+  version: "1.0.0"
+  title: "Stylor APIs"
+  contact:
+    email: "kashif.bilal.ali07@gmail.com"
+# host: "heroku.com"
+# basePath: "/v1"
+tags:
+- name: "orders"
+  description: "orders APIs"
+security:
+  - basicAuth: []
+paths:
+  /v1/csv:
+    get:
+      tags:
+      - "orders"
+      summary: "generate orders csv file and download or send it over an email"
+      description: "An api to generate a csv file for orders between two dates. \n
+       Ref: https://www.epochconverter.com/ for generating epoch timestamps"
+      operationId: "api.generate_csv"
+      consumes:
+      - "application/json"
+      produces:
+      - "text/csv"
+      parameters:
+      - name: "created_from"
+        type: integer
+        in: "query"
+        # example: 
+        description: "Created from date in epoch timestamp, ex: 1610096542"
+        required: true
+      - name: "created_to"
+        type: integer
+        in: "query"
+        # example: 
+        description: "Created till date in epoch timestamp, ex: 1620464542. If not provided then till now"
+        required: false
+      # - name: "download"
+      #   type: boolean
+      #   in: "query"
+      #   default: true
+      #   required: true
+      #   description: "If download is true then csv will be downloaded, else it will be sent over email"
+      responses:
+        "200":
+          description: "Success"
+        "400":
+          description: "Client Error"
+        "500":
+          description: "Server Error"
+securityDefinitions:
+  basicAuth:
+    type: basic
+    x-basicInfoFunc: api.basic_auth

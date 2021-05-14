@@ -3,8 +3,13 @@ import os
 from logger import LOG
 
 class Settings(object):
-    TEST_MODE = False
+    TEST_MODE = True
     GENERATED_FILES_FOLDER = "generated-files/"
+    PG_HOST = os.getenv("DATABASE_URL", "postgresql://postgres:welcome@localhost/postgres")
+    SSL_MODE = 'disable' if TEST_MODE else 'require'
+
+    API_USER = os.getenv("API_USER")
+    API_PASSWORD = os.getenv("API_PASSWORD")
 
     SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
     SMTP_PORT = int(os.getenv("SMTP_PORT", 465))
@@ -23,7 +28,8 @@ class Settings(object):
     LOG.debug(f"ECWID_PRIVATE_TOKEN {ECWID_PRIVATE_TOKEN}, ECWID_STORE_ID {ECWID_STORE_ID},"
         f"PICKUP_LOCATION_ID {PICKUP_LOCATION_ID}, ID_FIRST_VALUE {ID_FIRST_VALUE}")
 
-    if not ECWID_PRIVATE_TOKEN or not ECWID_STORE_ID or not PICKUP_LOCATION_ID or not ID_FIRST_VALUE or not SENDER_EMAIL or not SENDER_PASSWORD:
+    if not API_USER or not API_PASSWORD or not ECWID_PRIVATE_TOKEN or not ECWID_STORE_ID or not PICKUP_LOCATION_ID\
+        or not ID_FIRST_VALUE or not SENDER_EMAIL or not SENDER_PASSWORD:
         raise Exception("Some of the required fields are missing")
 
     SHOW_DISCOUNT = bool(os.getenv("SHOW_DISCOUNT", False)) # Toggle to write discount related data to csv
