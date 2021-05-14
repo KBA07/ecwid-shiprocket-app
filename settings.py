@@ -3,7 +3,7 @@ import os
 from logger import LOG
 
 class Settings(object):
-    TEST_MODE = True
+    TEST_MODE = False
     GENERATED_FILES_FOLDER = "generated-files/"
     PG_HOST = os.getenv("DATABASE_URL", "postgresql://postgres:welcome@localhost/postgres")
     SSL_MODE = 'disable' if TEST_MODE else 'require'
