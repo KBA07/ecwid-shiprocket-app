@@ -1,3 +1,4 @@
+gunicorn
 requests
 APScheduler==3.0.0
 SQLAlchemy

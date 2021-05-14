@@ -1,1 +1,1 @@
-clock: python send.py
+web: gunicorn webapp:app
