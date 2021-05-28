@@ -16,7 +16,7 @@ def generate_csv(created_from, created_to=None, download=False):
         created_to = int(time.time())
         LOG.info("Created to not sent")
     
-    file_name, count, total_price, created_to = tr.generate_csv_order_file(created_from)
+    file_name, count, total_price, created_to = tr.generate_csv_order_file(created_from, created_to)
 
     if not download:
         subject = f"Recieved {count} orders from {time.strftime('%d %b %Y %H:%M', time.localtime(created_from))} to {time.strftime('%d %b %Y %H:%M', time.localtime(created_to))} worth {total_price}"
