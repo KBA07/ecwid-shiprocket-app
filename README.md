@@ -1,1 +1,1 @@
-# mail-listener
+# Integration between ecwid and shiprocket.
