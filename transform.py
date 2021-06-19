@@ -98,9 +98,11 @@ class Transformer(object):
                 cod_charges = None
                 gift_wrap_charges = None
                 total_discount_per_order = order['couponDiscount'] if Settings.SHOW_DISCOUNT else None
-                length = item['dimensions']['length'] if item['dimensions']['length'] else Settings.DEFAULT_LENGTH
-                breadth = item['dimensions']['width'] if item['dimensions']['width'] else Settings.DEFAULT_BREADTH
-                height = item['dimensions']['height'] if item['dimensions']['height'] else Settings.DEFAULT_HEIGHT
+
+                dimensions = item.get('dimensions', {}) # gracefully handling this field
+                length = dimensions.get('length') if dimensions.get('length') else Settings.DEFAULT_LENGTH # length, breath, height can also be 0
+                breadth = dimensions.get('width') if dimensions.get('width') else Settings.DEFAULT_BREADTH
+                height = dimensions.get('height') if dimensions.get('height') else Settings.DEFAULT_HEIGHT
                 weight = item['weight'] if item['weight'] else Settings.DEFAULT_WEIGHT
                 send_notification = Settings.SEND_NOTIFICATION
                 comment = None
