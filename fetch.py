@@ -9,7 +9,7 @@ import requests
 from logger import LOG
 from settings import Settings
 
-CACHED_CONTENT = json.load(open("response-venture.json")) if Settings.TEST_MODE else {}
+CACHED_CONTENT = json.load(open("response-buisness.json")) if Settings.TEST_MODE else {}
 
 
 class EcwidAPI(object):

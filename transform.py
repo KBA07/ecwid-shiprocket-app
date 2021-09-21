@@ -46,6 +46,11 @@ class Transformer(object):
             return f"{self.influencer_id_prefix}{order_id}"
 
         return f"{self.id_prefix}{order_id}"
+    
+    def get_final_price(self, order_id, selling_price, discount):
+        if "ISTY" in order_id:
+            return selling_price
+        return selling_price - discount
 
     def get_order_list(self, created_from, created_to):
         order_list = []
@@ -89,14 +94,14 @@ class Transformer(object):
                 master_sku = item['sku']
                 product_name = item['name']
                 product_quantity = item['quantity']
-                tax = item['tax'] if item['tax'] else None
+                tax = item['tax'] if item['tax'] else Settings.DEFAULT_TAX
                 selling_price = item['price']
-                total_price += selling_price
-                discount = item.get('couponAmount') if Settings.SHOW_DISCOUNT else None
+                discount = item.get('couponAmount', 0) if Settings.SHOW_DISCOUNT else None
+                total_price += self.get_final_price(order_id, selling_price, discount)
                 shipping_charges = item.get('shipping') if item.get('shipping') else None
                 cod_charges = None
                 gift_wrap_charges = None
-                total_discount_per_order = order['couponDiscount'] if Settings.SHOW_DISCOUNT else None
+                total_discount_per_order = order.get('couponDiscount') if Settings.SHOW_DISCOUNT else None
 
                 dimensions = item.get('dimensions', {}) # gracefully handling this field
                 length = dimensions.get('length') if dimensions.get('length') else Settings.DEFAULT_LENGTH # length, breath, height can also be 0

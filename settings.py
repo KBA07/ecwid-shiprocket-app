@@ -32,7 +32,7 @@ class Settings(object):
         or not ID_FIRST_VALUE or not SENDER_EMAIL or not SENDER_PASSWORD:
         raise Exception("Some of the required fields are missing")
 
-    SHOW_DISCOUNT = bool(os.getenv("SHOW_DISCOUNT", False)) # Toggle to write discount related data to csv
+    SHOW_DISCOUNT = bool(os.getenv("SHOW_DISCOUNT", True)) # Toggle to write discount related data to csv
     SEND_NOTIFICATION = bool(os.getenv("SEND_NOTIFICATION", True)) # Todo Looks Buggy, Toggle to write send notification to CSV
 
     CHANNEL = os.getenv("CHANNEL", "CUSTOM")
@@ -41,6 +41,7 @@ class Settings(object):
     INFLUENCER_ID_PREFIX = os.getenv("INFLUENCER_ID_PREFIX", "ISTY")
     INFLUENCER_COUPON_PREFIX = os.getenv("INFLUENCER_COUPON_PREFIX", "INFC")
 
+    DEFAULT_TAX = int(os.getenv("DEFAULT_TAX", 5))
     DEFAULT_LENGTH = int(os.getenv("DEFAULT_LENGTH", 14))
     DEFAULT_BREADTH = int(os.getenv("DEFAULT_BREADTH", 12))
     DEFAULT_HEIGHT = float(os.getenv("DEFAULT_HEIGHT", 0.5))
