@@ -35,6 +35,7 @@ class EcwidAPI(object):
     
     def get_orders(self, created_from=DEFAULT_FROM_TIMESTAMP, created_to=DEFAULT_TO_TIMESTAMP, 
         limit=DEFAULT_LIMIT, offset=DEFAULT_FROM_TIMESTAMP):
+        
         URL = self.host + self.ORDERS_URI.format(store_id=self.store_id)
         params = {
             "limit": limit,

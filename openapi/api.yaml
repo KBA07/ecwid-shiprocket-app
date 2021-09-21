@@ -14,10 +14,10 @@ security:
   - basicAuth: []
 paths:
   /v1/csv:
-    get:
+    post:
       tags:
       - "orders"
-      summary: "generate orders csv file and download or send it over an email"
+      summary: "generate orders csv file and send it over an email"
       description: "An api to generate a csv file for orders between two dates. \n
        Ref: https://www.epochconverter.com/ for generating epoch timestamps"
       operationId: "api.generate_csv"
@@ -44,6 +44,50 @@ paths:
       #   default: true
       #   required: true
       #   description: "If download is true then csv will be downloaded, else it will be sent over email"
+      responses:
+        "200":
+          description: "Success"
+        "400":
+          description: "Client Error"
+        "500":
+          description: "Server Error"
+  /v1/total:
+    get:
+      tags:
+      - "orders"
+      summary: "this api will get the total number of orders with value between two timestamps"
+      description: "An api to generate total number of orders with value between two timestamps. \n
+       Ref: https://www.epochconverter.com/ for generating epoch timestamps"
+      operationId: "api.generate_total"
+      consumes:
+      - "application/json"
+      produces:
+      - "text/csv"
+      parameters:
+      - name: "created_from"
+        type: integer
+        in: "query"
+        # example: 
+        description: "Created from date in epoch timestamp, ex: 1610096542"
+        required: true
+      - name: "created_to"
+        type: integer
+        in: "query"
+        # example: 
+        description: "Created till date in epoch timestamp, ex: 1620464542. If not provided then till now"
+        required: false
+      # - name: "exclude_influencer"
+      #   type: boolean
+      #   in: "query"
+      #   default: true
+      #   required: false
+      #   description: "If turned on will skip influencer order"
+      # - name: "exclude_customer"
+      #   type: boolean
+      #   in: "query"
+      #   default: false
+      #   required: false
+      #   description: "If turned on will skip customer order"
       responses:
         "200":
           description: "Success"

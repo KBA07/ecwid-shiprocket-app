@@ -10,6 +10,7 @@ from logger import LOG
 
 
 class Transformer(object):
+    _SKIP_ORDER_STATUS = ["REFUNDED", "CANCELLED"]
     def __init__(self, host=Settings.ECWID_HOST, store_id=Settings.ECWID_STORE_ID, access_token=Settings.ECWID_PRIVATE_TOKEN, 
         ID_PREFIX=Settings.ID_PREFIX, INFLUENCER_ID_PREFIX=Settings.INFLUENCER_ID_PREFIX, ID_FIRST_VALUE=Settings.ID_FIRST_VALUE):
 
@@ -27,6 +28,8 @@ class Transformer(object):
             return "Prepaid"
         elif payment_status == "AWAITING_PAYMENT":
             return "COD"
+        
+        LOG.info(f"unknown payment status recieved {payment_status}")
 
     @staticmethod
     def get_order_date(date_string):
@@ -44,19 +47,15 @@ class Transformer(object):
 
         return f"{self.id_prefix}{order_id}"
 
-    def generate_csv_order_file(self, created_from, created_to=int(time()), source_sample_file=Settings.SOURCE_FILE, 
-        dest_file_format = Settings.DESTINATION_FILE):
-
-        for file in os.listdir(Settings.GENERATED_FILES_FOLDER):
-            if "csv" in file:
-                os.remove(Settings.GENERATED_FILES_FOLDER + file)
-
-        dest_file = Settings.GENERATED_FILES_FOLDER + dest_file_format.format(created_to)
-        copyfile(source_sample_file, dest_file)
-
+    def get_order_list(self, created_from, created_to):
+        order_list = []
         order_count = 0
         total_price = 0
         for order in self.ecwid_api_obj.get_all_orders(created_from, created_to):
+            if order['paymentStatus'] in self._SKIP_ORDER_STATUS:
+                LOG.info("recieved order which is cancelled or refunded, hence skipping")
+                continue
+
             order_count += 1
             order_id = self.generate_id(order['id'], order)
             order_date = self.get_order_date(order['createDate'])
@@ -113,10 +112,27 @@ class Transformer(object):
                     gift_wrap_charges, total_discount_per_order, length, breadth, height, weight, send_notification, comment, hsn_code, 
                     pickup_location_id]
 
-                total_detail = base_details + order_details
-                with open(dest_file, 'a', newline='') as file:
-                    writer = csv.writer(file)
-                    writer.writerow(total_detail)
+                order_list.append(base_details + order_details)
+
+        return order_list, order_count, total_price
+
+
+    def generate_csv_order_file(self, created_from, created_to=int(time()), source_sample_file=Settings.SOURCE_FILE, 
+        dest_file_format = Settings.DESTINATION_FILE):
+
+        for file in os.listdir(Settings.GENERATED_FILES_FOLDER):
+            if "csv" in file:
+                os.remove(Settings.GENERATED_FILES_FOLDER + file)
+
+        dest_file = Settings.GENERATED_FILES_FOLDER + dest_file_format.format(created_to)
+        copyfile(source_sample_file, dest_file)
+
+        order_list, order_count, total_price = self.get_order_list(created_from, created_to)
+
+        with open(dest_file, 'a', newline='') as file:
+            for order in order_list:
+                writer = csv.writer(file)
+                writer.writerow(order)
 
         return dest_file, order_count, total_price, created_to    
 
