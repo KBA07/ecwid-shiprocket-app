@@ -1,8 +1,9 @@
 gunicorn
 requests
-APScheduler==3.0.0
-SQLAlchemy
-psycopg2-binary
-dj-database-url
 
-connexion[swagger-ui]==2.7.0
+# APScheduler==3.0.0
+# SQLAlchemy
+# psycopg2-binary
+# dj-database-url
+
+connexion[swagger-ui]

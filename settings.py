@@ -22,10 +22,10 @@ class Settings(object):
     ECWID_PRIVATE_TOKEN = os.getenv("ECWID_PRIVATE_TOKEN") # Mandatory
     ECWID_STORE_ID = os.getenv("STORE_ID") # Mandatory
 
-    PICKUP_LOCATION_ID = int(os.getenv("PICKUP_LOCATION_ID")) # Mandatory
-    ID_FIRST_VALUE = int(os.getenv("ID_FIRST_VALUE")) # Mandatory
+    PICKUP_LOCATION_ID = int(os.getenv("PICKUP_LOCATION_ID", 0)) # Mandatory
+    ID_FIRST_VALUE = int(os.getenv("ID_FIRST_VALUE", 0)) # Mandatory
 
-    LOG.debug(f"ECWID_PRIVATE_TOKEN {ECWID_PRIVATE_TOKEN}, ECWID_STORE_ID {ECWID_STORE_ID},"
+    LOG.info(f"ECWID_PRIVATE_TOKEN {ECWID_PRIVATE_TOKEN}, ECWID_STORE_ID {ECWID_STORE_ID},"
         f"PICKUP_LOCATION_ID {PICKUP_LOCATION_ID}, ID_FIRST_VALUE {ID_FIRST_VALUE}")
 
     if not API_USER or not API_PASSWORD or not ECWID_PRIVATE_TOKEN or not ECWID_STORE_ID or not PICKUP_LOCATION_ID\
